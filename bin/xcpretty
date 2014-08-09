@@ -16,6 +16,7 @@ report_formats = {
   "junit"                     => XCPretty::JUnit,
   "html"                      => XCPretty::HTML,
   "json-compilation-database" => XCPretty::JSONCompilationDatabase,
+  "flatiron"                  => XCPretty::Flatiron,
 }
 
 printer_opts = {
