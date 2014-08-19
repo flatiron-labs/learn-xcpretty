@@ -1,3 +1,16 @@
+# Flatiron
+
+You must have xcode setup with an account with certification to run tests.
+
+To run tests with xcpretty in command line and report to ironbroker, enter:
+
+```
+xcodebuild -workspace yourworkspace.xcworkspace/ -scheme yourscheme test -sdk iphonesimulator7.1 | xcpretty -t --report flatiron
+```
+
+Currently, this will send to `staging.ironbroker.flatironschool.com`
+
+
 ![logo](http://i.imgur.com/i2fElxx.png)
 
 __`xcpretty` is a fast and flexible formatter for `xcodebuild`__.<br/>
