@@ -20,19 +20,24 @@ module XCPretty
 
     def initialize(options)
       load_dependencies
-      @json_output = {}
-      @json_output["tests"]={}
-      @json_output["tests"]["passing"]={}
-      @json_output["tests"]["failing"]={}
-      @json_output["lines"]=[]
-      @json_output["username"] = UsernameParser.get_username
-      @json_output["github_user_id"] = UserIdParser.get_user_id
-      @json_output["repo_name"] = RepoParser.get_repo
+      @json_output = {
+        "username": UsernameParser.get_username,
+        "github_user_id": UserIdParser.get_user_id,
+        "repo_name": RepoParser.get_repo,
+        "build": {
+          "test_suite": [{
+            "framework": 'xcpretty',
+            "formatted_output": [],
+            "duration": 0.0,
+            "lines": [],
+          }]
+        },
+        "test_count": 0,
+        "pass_count": 0,
+        "failure_count": 0
+      }
 
       @parser = Parser.new(self)
-
-      @test_count = 0
-      @fail_count = 0
 
       @connection = Faraday.new(url: SERVICE_URL) do |faraday|
         faraday.adapter  Faraday.default_adapter
@@ -41,28 +46,26 @@ module XCPretty
 
     def handle(line)
       @parser.parse(line)
-      @json_output["lines"] << line
+      @json_output["build"]["test_suite"][0]["lines"] << line
     end
 
     def format_passing_test(classname, test_case, time)
-      @json_output["tests"]["passing"][classname]||=[]
+      @json_output["build"]["test_suite"][0]["formatted_output"]["passing"][classname] ||= []
       pass = {"name"=>test_case, "time" => time}
-      @json_output["tests"]["passing"][classname]<<pass;
-      @test_count += 1
+      @json_output["build"]["test_suite"][0]["formatted_output"]["passing"][classname] << pass;
+      @json_output["test_count"] += 1
+      @json_output["pass_count"] += 1
     end
 
     def format_failing_test(classname, test_case, reason, file)
-      @json_output["tests"]["failing"][classname]||=[]
+      @json_output[["build"]["test_suite"][0]["formatted_output"]["failing"][classname] ||= []
       failure = {"name"=>test_case, "file" => file, "reason" => reason}
-      @json_output["tests"]["failing"][classname]<<failure;
-      @test_count += 1
-      @fail_count += 1
+      @json_output["build"]["test_suite"][0]["formatted_output"]["failing"][classname] << failure
+      @json_output["test_count"] += 1
+      @json_output["failure_count"] += 1
     end
 
     def finish
-      @json_output["summary"] ={}
-      @json_output["summary"]["test_count"]=@test_count
-      @json_output["summary"]["failure_count"] = @fail_count
       write_report_file
     end
 
