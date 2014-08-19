@@ -20,21 +20,21 @@ module XCPretty
 
     def initialize(options)
       load_dependencies
-      @json_output = {
-        "username": UsernameParser.get_username,
-        "github_user_id": UserIdParser.get_user_id,
-        "repo_name": RepoParser.get_repo,
-        "build": {
-          "test_suite": [{
-            "framework": 'xcpretty',
-            "formatted_output": [],
-            "duration": 0.0,
-            "lines": [],
+      @formatted_output = {
+        username: UsernameParser.get_username,
+        github_user_id: UserIdParser.get_user_id,
+        repo_name: RepoParser.get_repo,
+        build: {
+          test_suite: [{
+            framework: 'xcpretty',
+            formatted_output: [],
+            duration: 0.0,
+            build_output: [],
           }]
         },
-        "test_count": 0,
-        "pass_count": 0,
-        "failure_count": 0
+        total_count: 0,
+        passing_count: 0,
+        failure_count: 0
       }
 
       @parser = Parser.new(self)
@@ -46,23 +46,21 @@ module XCPretty
 
     def handle(line)
       @parser.parse(line)
-      @json_output["build"]["test_suite"][0]["lines"] << line
+      @formatted_output[:build][:test_suite][0][:build_output] << line
     end
 
     def format_passing_test(classname, test_case, time)
-      @json_output["build"]["test_suite"][0]["formatted_output"]["passing"][classname] ||= []
-      pass = {"name"=>test_case, "time" => time}
-      @json_output["build"]["test_suite"][0]["formatted_output"]["passing"][classname] << pass;
-      @json_output["test_count"] += 1
-      @json_output["pass_count"] += 1
+      pass = {classname: classname, name: test_case, time: time}
+      @formatted_output[:build][:test_suite][0][:formatted_output] << pass
+      @formatted_output[:total_count] += 1
+      @formatted_output[:passing_count] += 1
     end
 
     def format_failing_test(classname, test_case, reason, file)
-      @json_output[["build"]["test_suite"][0]["formatted_output"]["failing"][classname] ||= []
-      failure = {"name"=>test_case, "file" => file, "reason" => reason}
-      @json_output["build"]["test_suite"][0]["formatted_output"]["failing"][classname] << failure
-      @json_output["test_count"] += 1
-      @json_output["failure_count"] += 1
+      failure = {classname: classname, name: test_case, file: file, reason: reason}
+      @formatted_output[:build][:test_suite][0][:formatted_output] << failure
+      @formatted_output[:total_count] += 1
+      @formatted_output[:failure_count] += 1
     end
 
     def finish
@@ -75,7 +73,7 @@ module XCPretty
       @connection.post do |req|
         req.url SERVICE_ENDPOINT
         req.headers['Content-Type'] = 'application/json'
-        req.body = @json_output.to_json
+        req.body = @formatted_output.to_json
       end
     end
   end
