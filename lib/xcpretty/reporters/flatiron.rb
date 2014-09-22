@@ -137,7 +137,7 @@ module XCPretty
   class RepoParser
     def self.get_repo
       begin
-        repo = Git.open(File.expand_path("..", Dir.pwd))
+        repo = Git.open(File.expand_path(".", Dir.pwd))
       rescue
         puts "Not a valid Git repository"
         die
