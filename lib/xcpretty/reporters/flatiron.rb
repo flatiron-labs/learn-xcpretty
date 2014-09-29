@@ -1,6 +1,6 @@
 module XCPretty
   class Flatiron
-    SERVICE_URL = 'http://staging.ironbroker.flatironschool.com'
+    SERVICE_URL = 'http://ironbroker.flatironschool.com'
     SERVICE_ENDPOINT = '/e/flatiron_xcpretty/build'
 
     include XCPretty::FormatMethods
