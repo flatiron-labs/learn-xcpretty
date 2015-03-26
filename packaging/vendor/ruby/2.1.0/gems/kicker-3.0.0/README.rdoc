@@ -1,0 +1,150 @@
+= Kicker
+
+{<img src="https://secure.travis-ci.org/alloy/kicker.png" />}[http://travis-ci.org/alloy/kicker]
+
+A lean, agnostic, flexible file-change watcher.
+
+== Installation
+
+  $ gem install kicker -s http://gemcutter.org
+
+== The short version
+
+  Usage: ./bin/kicker [options] [paths to watch]
+
+    Available recipes: ignore, jstest, rails, ruby.
+
+      -s, --silent                     Keep output to a minimum.
+      -q, --quiet                      Quiet output. Don't print timestamps when logging.
+      -c, --clear                      Clear console before each run.
+      -l, --latency [FLOAT]            The time to collect file change events before acting on them. Defaults to 1 second.
+      -r, --recipe [NAME]              A named recipe to load.
+      -e, --execute [COMMAND]          The command to execute.
+      -b, --ruby [PATH]                Use an alternate Ruby binary for spawned test runners. (Default is `ruby')
+
+
+== The long version
+
+=== Execute a shell command
+
+Show all files, whenever a change occurs in the current work directory:
+
+  $ kicker -e "ls -l" .
+
+Show all files, whenever a change occurs to a specific file:
+
+  $ kicker -e "ls -l" foo.txt
+
+Or use it as a ghetto-autotest, running tests whenever files change:
+
+  $ kicker -e "ruby test/test_case.rb" test/test_case.rb lib/file.rb
+
+Et cetera.
+
+=== Using recipes
+
+A recipe is a predefined handler. You can use as many as you like, by
+specifying them with the <tt>--recipe</tt> (<tt>-r</tt>) option.
+
+For instance, when in the root of a typical Ruby on Rails application, using
+the <tt>rails</tt> recipe will map models, concerns, controllers, helpers, and
+views to their respective test files. These will then all be ran with Ruby.
+
+A few recipes come shipped with Kicker:
+* Typical Ruby library.
+* Ruby on Rails, as aforementioned.
+* JavaScript tests, to run it needs
+  HeadlessSquirrel[http://github.com/Fingertips/Headless-squirrel].
+* Ignore, ignores logs, tmp, and svn and git files.
+
+Add your own shared recipes to <tt>~/.kick</tt> folder or
+current working directory <tt>.kick</tt>.
+
+=== Project specific handlers
+
+Most of the time, you’ll want to create handlers specific to the project at
+hand. This can be done by adding your handlers to a <tt>.kick</tt> file and
+running Kicker from the directory containing it.
+
+This file is reloaded once saved. No need to stop Kicker.
+
+== Writing handlers
+
+Whenever file-change events occur, Kicker will go through a chain of handlers
+until that the files list is empty, or the end of the chain is reached.
+
+Handlers are objects that respond to <tt>#call</tt>. These are typically Proc
+objects. (If you know Rack, you’re familiar with this concept.) Every handler
+gets passed a list of changed files and can decide whether or not to act on
+them. Normally when handling a file, you should remove it from the files list,
+unless you want to let the file fall through to another handler. In the same
+way, one can add files to handler to the files list.
+
+==== Time for a simple example
+
+  process do |files|
+    execute("rake docs:generate && open -a Safari html/index.html") if files.delete("README.rdoc")
+  end
+
+A handler is defined by passing a block to <tt>process</tt>. Which is one of
+three possible callback chains to add your handlers to, the others being:
+<tt>pre_process</tt> and <tt>post_process</tt>. See Kernel for more info.
+
+Then <tt>README.rdoc</tt> is deleted from the files array. If it did exist in
+the array and was deleted, a shell command is executed which runs a rake task
+to generate rdoc and open the docs with Safari.
+
+==== Something more elaborate.
+
+Consider a Rails application with a mailer. Since the naming convention of
+mailer views tend to be fairly application specific, a specific handler has to
+be added:
+
+  process do |files|
+    test_files = files.take_and_map do |file|
+      if path =~ %r{^app/views/mailer/\w+\.erb$}
+        'test/unit/mailer_test.rb'
+
+      # elsif ... handle more app specific stuff
+      end
+    end
+
+    Ruby.run_tests test_files
+  end
+
+The files list is iterated over with the Array#take_and_map method, which both
+removes and maps the results. This is an easy way to do a common thing in
+recipes. See Kicker::ArrayExt for details.
+
+The handler then checks if the file is a mailer view and if so runs the
+mailers test case. Ruby.run_tests runs them with something like the following
+command:
+
+  execute "ruby -r #{test_files.join(' -r ')} -e ''" unless test_files.empty?
+
+See Kernel for more info on the utility methods.
+
+To load recipes from your <tt>~/.kick</tt> file:
+
+  recipe :ignore
+  ignore(/^data\//)
+
+That’s basically it, just remember that the order of specifying handlers _can_
+be important in your decision on where to specify handlers.
+
+== Notifiers
+
+For platform specific notifications we use the notify gem. For supported
+backends see: https://github.com/jugyo/notify#feature.
+
+You select the notify backend by setting the NOTIFY environment variable.
+
+  gem install terminal-notifier
+  env NOTIFY=terminal-notifier kicker
+
+== Contributors
+
+* Manfred Stienstra (@manfred)
+* Cristi Balan (@evilchelu)
+* Damir Zekic (@sidonath)
+* Adam Keys (@therealadam)
