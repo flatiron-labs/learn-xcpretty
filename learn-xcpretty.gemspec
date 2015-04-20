@@ -30,7 +30,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake"
   spec.add_development_dependency "rspec", "~> 2"
   spec.add_development_dependency "cucumber"
-  spec.add_dependency "oj"
+  spec.add_dependency "oj", "~> 2.12"
   spec.add_dependency "git"
   spec.add_dependency "netrc"
   spec.add_dependency "faraday"
