@@ -31,7 +31,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec", "~> 2"
   spec.add_development_dependency "cucumber"
   spec.add_dependency "oj", "~> 2.12"
-  spec.add_dependency "git"
-  spec.add_dependency "netrc"
-  spec.add_dependency "faraday"
+  spec.add_dependency "git", "~> 1.2"
+  spec.add_dependency "netrc", "~> 0.10"
+  spec.add_dependency "faraday", "~> 0.9"
 end
