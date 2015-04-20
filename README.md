@@ -5,7 +5,7 @@ You must have xcode setup with an account with certification to run tests.
 To run tests with learn-xcpretty in command line and report to ironbroker, enter:
 
 ```
-xcodebuild -workspace yourworkspace.xcworkspace/ -scheme yourscheme test -sdk iphonesimulator7.1 | learn-xcpretty -t --report flatiron
+xcodebuild -workspace yourworkspace.xcworkspace/ -scheme yourscheme test -sdk iphonesimulator7.1 | learn-xcpretty -t --report learn
 ```
 
 Currently, this will send to `staging.ironbroker.flatironschool.com`
