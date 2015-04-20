@@ -1,11 +1,11 @@
-# Flatiron
+# Learn
 
 You must have xcode setup with an account with certification to run tests.
 
-To run tests with xcpretty in command line and report to ironbroker, enter:
+To run tests with learn-xcpretty in command line and report to ironbroker, enter:
 
 ```
-xcodebuild -workspace yourworkspace.xcworkspace/ -scheme yourscheme test -sdk iphonesimulator7.1 | xcpretty -t --report flatiron
+xcodebuild -workspace yourworkspace.xcworkspace/ -scheme yourscheme test -sdk iphonesimulator7.1 | learn-xcpretty -t --report flatiron
 ```
 
 Currently, this will send to `staging.ironbroker.flatironschool.com`
@@ -13,7 +13,7 @@ Currently, this will send to `staging.ironbroker.flatironschool.com`
 
 ![logo](http://i.imgur.com/i2fElxx.png)
 
-__`xcpretty` is a fast and flexible formatter for `xcodebuild`__.<br/>
+__`learn-xcpretty` is a fast and flexible formatter for `xcodebuild`__.<br/>
 It does one thing, and it should do it well.
 
 [![Gem version](http://img.shields.io/gem/v/xcpretty.svg)](http://rubygems.org/gems/xcpretty)
@@ -22,25 +22,25 @@ It does one thing, and it should do it well.
 
 ## Installation
 ``` bash
-$ gem install xcpretty
+$ gem install learn-xcpretty
 ```
 
 ## Usage
 ``` bash
-$ xcodebuild [flags] | xcpretty -c
+$ xcodebuild [flags] | learn-xcpretty -c
 ```
-`xcpretty` is designed to be piped with `xcodebuild` and thus keeping 100% compatibility with it.
+`learn-xcpretty` is designed to be piped with `xcodebuild` and thus keeping 100% compatibility with it.
 It's even a bit faster than `xcodebuild` only, since it saves your terminal some prints.
 
-__Important:__ If you're running `xcpretty` on a CI like Travis or Jenkins, you may want to exit with same status code as `xcodebuild`.
+__Important:__ If you're running `learn-xcpretty` on a CI like Travis or Jenkins, you may want to exit with same status code as `xcodebuild`.
 CI uses the status code to determine if build has failed.
 
 ``` bash
-$ set -o pipefail && xcodebuild [flags] | xcpretty -c
+$ set -o pipefail && xcodebuild [flags] | learn-xcpretty -c
 #
 # OR
 #
-$ xcodebuild [flags] | xcpretty -c && exit ${PIPESTATUS[0]}
+$ xcodebuild [flags] | learn-xcpretty -c && exit ${PIPESTATUS[0]}
 ```
 
 ## Formats

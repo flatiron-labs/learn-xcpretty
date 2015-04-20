@@ -1,5 +1,5 @@
 module XCPretty
-  class Flatiron
+  class Learn
     SERVICE_URL = 'http://ironbroker.flatironschool.com'
     SERVICE_ENDPOINT = '/e/flatiron_xcpretty/build'
 

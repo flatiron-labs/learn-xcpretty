@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'xcpretty/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "xcpretty"
+  spec.name          = "learn-xcpretty"
   spec.version       = XCPretty::VERSION
   spec.authors       = ["Marin Usalj", "Delisa Mason"]
   spec.email         = ["mneorr@gmail.com", "iskanamagus@gmail.com"]
