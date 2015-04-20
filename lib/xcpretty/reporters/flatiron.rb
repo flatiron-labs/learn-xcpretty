@@ -46,7 +46,6 @@ module XCPretty
 
     def handle(line)
       @parser.parse(line)
-      @formatted_output[:build][:test_suite][0][:build_output] << line
     end
 
     def format_passing_test(classname, test_case, time)
