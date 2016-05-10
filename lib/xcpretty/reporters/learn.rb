@@ -1,7 +1,7 @@
 module XCPretty
   class Learn
     SERVICE_URL = 'http://ironbroker.flatironschool.com'
-    SERVICE_ENDPOINT = '/e/flatiron_xcpretty/build'
+    SERVICE_ENDPOINT = '/e/flatiron_xcpretty'
 
     include XCPretty::FormatMethods
 
